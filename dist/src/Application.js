@@ -2,6 +2,7 @@
 import * as PIXI from '../libs/pixi.min';
 import Canvas from './view/Canvas';
 import resources from './config/resources'
+import config from './config/config';
 
 const { pixelRatio, windowWidth, windowHeight } = wx.getSystemInfoSync();
 
@@ -11,17 +12,24 @@ export default class Application {
    }
 
    start() {
-
+      PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
       var app = this.app = new PIXI.Application({
-         width: windowWidth,
-         height: windowHeight,
+         width: windowWidth * pixelRatio,
+         height: windowHeight * pixelRatio,
          view: canvas
       });
       app.renderer.backgroundColor = 0x061639;
       app.renderer.plugins.interaction.mapPositionToPoint = (point, x, y) => {
-         point.x = x
-         point.y = y
+         point.x = x * pixelRatio
+         point.y = y * pixelRatio
       }
+      var size = config.mainSize;
+      console.log(size);
+      // app.stage.width = size.width;
+      // app.stage.height = size.height;
+      // app.stage.x = size.x;
+      // app.stage.y = size.y;
+      // app.stage.scale.set(size.scale);
       for (let i in resources) {
          let str = window.REMOTE_SERVER_ROOT + resources[i];
          console.log('加载' + str);

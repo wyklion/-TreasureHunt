@@ -14,12 +14,13 @@ export default class Canvas {
       var context = this.context;
       context.canvas = this;
       context.app = Application.instance.app;
-      var { x, y, width, height } = config.mainSize;
+      var { x, y, width, height, scale } = config.mainSize;
       var stage = this.stage = new PIXI.Container();
       stage.x = x;
       stage.y = y;
-      stage.width = width;
-      stage.height = height;
+      // stage.width = width;
+      // stage.height = height;
+      stage.scale.set(scale)
       context.app.stage.addChild(stage);
       context.stage = stage;
       this.displays = [];
