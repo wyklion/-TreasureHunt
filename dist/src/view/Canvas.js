@@ -3,9 +3,11 @@ import config from "../config/config";
 import Display from "./Display";
 import DisplayContext from "./DisplayContext";
 import MainScene from "./MainScene";
+import PlayScene from "./PlayScene";
 
 export default class Canvas {
    constructor() {
+      this.scene = null;
       this.context = new DisplayContext();
       this.setup();
       this.switchScene(1);
@@ -23,35 +25,29 @@ export default class Canvas {
       stage.scale.set(scale)
       context.app.stage.addChild(stage);
       context.stage = stage;
-      this.displays = [];
    }
    switchScene(s) {
+      if (this.scene) {
+         this.scene.dispose();
+      }
+      var scene = null;
       switch (s) {
          case 1:
-            var scene = new MainScene();
-            this.addDisplay(scene);
+            scene = new MainScene();
+            break;
+         case 2:
+            scene = new PlayScene();
             break;
          default:
             break;
       }
-   }
-   addDisplay(d) {
-      d.context = this.context;
-      d.setup();
-      d.init();
-      this.displays.push(d);
-   }
-   removeDisplay(d) {
-      var idx = this.displays.indexOf(d);
-      this.displays.splice(idx, 1);
+      this.scene = scene;
+      scene.context = this.context;
+      scene.setup();
+      scene.init();
    }
    update() {
-      for (var i = 0; i < this.displays.length; i++) {
-         var d = this.displays[i];
-         if (d.dirty) {
-            d.update();
-            d.dirty = false;
-         }
-      }
+      if (!this.scene) return;
+      this.scene.update();
    }
 }

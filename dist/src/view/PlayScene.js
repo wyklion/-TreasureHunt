@@ -1,15 +1,12 @@
-import config from "../config/config";
-import sounds from "../util/sounds";
-import Scene from "./Scene";
 
-export default class MainScene extends Scene {
+import Scene from "./Scene";
+import sounds from "../util/sounds";
+
+export default class PlayScene extends Scene {
    constructor() {
       super();
    }
    init() {
-      // PIXI.loader
-      //    .add("images/anyImage.png")
-      //    .load(setup);
       var bg = this.bg = new PIXI.Sprite(PIXI.loader.resources['bg'].texture);
       bg.width = 150;
       bg.height = 250;
@@ -19,8 +16,8 @@ export default class MainScene extends Scene {
          console.log(event, position.x, position.y);
       })
       this.stage.addChild(bg);
-      // 开始
-      var startBtn = this.startBtn = new PIXI.Text('开始', { fontSize: 26 });
+      // 返回
+      var startBtn = this.startBtn = new PIXI.Text('返回', { fontSize: 26 });
       startBtn.anchor.set(0.5, 0.5);
       startBtn.x = 75;
       startBtn.y = 180;
@@ -28,15 +25,16 @@ export default class MainScene extends Scene {
       startBtn.interactive = true;
       startBtn.on('pointerdown', (event) => {
          var position = event.data.getLocalPosition(this.context.app.stage);
-         console.log('click start', position.x, position.y);
+         console.log('click back', position.x, position.y);
          sounds.play('bomb');
-         this.context.canvas.switchScene(2);
+         this.context.canvas.switchScene(1);
       });
       this.stage.addChild(startBtn);
       console.log('main scene init...')
       var bunny = this.bunny = new PIXI.Sprite.fromImage("https://pixijs.io/examples/examples/assets/bunny.png");
       bunny.width = 50;
       bunny.height = 50;
+      bunny.y = 60;
       // bunny.scale.set(0.2, 0.2);
       bunny.interactive = true;
       bunny.on("pointerdown", (event) => {
@@ -45,9 +43,10 @@ export default class MainScene extends Scene {
          console.log(position.x, position.y);
       })
       this.stage.addChild(bunny);
-      // sounds.playMusic('bg1');
+      sounds.playMusic('bg1');
    }
    dispose() {
+      sounds.stop();
       this.bg.destroy();
       this.startBtn.destroy();
       this.bunny.destroy();
