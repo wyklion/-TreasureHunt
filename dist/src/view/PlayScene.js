@@ -1,5 +1,6 @@
 
 import Scene from "./Scene";
+import BlockLayer from "./BlockLayer";
 import sounds from "../util/sounds";
 
 export default class PlayScene extends Scene {
@@ -20,7 +21,7 @@ export default class PlayScene extends Scene {
       var startBtn = this.startBtn = new PIXI.Text('返回', { fontSize: 26 });
       startBtn.anchor.set(0.5, 0.5);
       startBtn.x = 75;
-      startBtn.y = 180;
+      startBtn.y = 220;
       startBtn.scale.set(1);
       startBtn.interactive = true;
       startBtn.on('pointerdown', (event) => {
@@ -30,25 +31,20 @@ export default class PlayScene extends Scene {
          this.context.canvas.switchScene(1);
       });
       this.stage.addChild(startBtn);
-      console.log('main scene init...')
-      var bunny = this.bunny = new PIXI.Sprite.fromImage("https://pixijs.io/examples/examples/assets/bunny.png");
-      bunny.width = 50;
-      bunny.height = 50;
-      bunny.y = 60;
-      // bunny.scale.set(0.2, 0.2);
-      bunny.interactive = true;
-      bunny.on("pointerdown", (event) => {
-         // console.log(this.context.app);
-         var position = event.data.getLocalPosition(this.stage);
-         console.log(position.x, position.y);
-      })
-      this.stage.addChild(bunny);
-      sounds.playMusic('bg1');
+      this.createBlockLayer();
+      // sounds.playMusic('bg1');
+   }
+   startGame() {
+
+   }
+   createBlockLayer() {
+      var layer = this.blockLayer = new BlockLayer();
+      layer.init(this.stage, 11, 50);
    }
    dispose() {
       sounds.stop();
+      this.blockLayer.dispose();
       this.bg.destroy();
       this.startBtn.destroy();
-      this.bunny.destroy();
    }
 }
