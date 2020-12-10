@@ -1,15 +1,19 @@
 
-const { pixelRatio, windowWidth, windowHeight } = wx.getSystemInfoSync();
-var ww = windowWidth * pixelRatio;
-var hh = windowHeight * pixelRatio;
 var config = {
    size: {
-      width: 150,
-      height: 250,
+      width: 120,
+      height: 200,
+   },
+   blockNum: 7,
+   blockSize: 16,
+   game: {
    }
 }
 
 config.init = function () {
+   const { pixelRatio, windowWidth, windowHeight } = wx.getSystemInfoSync();
+   var ww = windowWidth * pixelRatio;
+   var hh = windowHeight * pixelRatio;
    var { width, height } = config.size;
    var w = ww;
    var h = hh;

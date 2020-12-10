@@ -1,6 +1,7 @@
 let resources = {
    images: {
-      "bg": 'res/image/main_background.png',
+      "bg": 'res/image/bg.png',
+      "bg2": 'res/image/main_background.png',
       "blueBlock": 'res/image/blueBlock.png',
       "blockBg": 'res/image/blockBg.png',
    },

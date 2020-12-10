@@ -13,16 +13,27 @@ export default class Canvas {
       this.switchScene(1);
    }
    setup() {
+      var { pixelRatio, windowWidth, windowHeight } = wx.getSystemInfoSync();
+      var { x, y, width, height, scale } = config.mainSize;
       var context = this.context;
       context.canvas = this;
-      context.app = Application.instance.app;
-      var { x, y, width, height, scale } = config.mainSize;
+      var app = context.app = Application.instance.app;
+      var bg = this.bg = new PIXI.TilingSprite(PIXI.loader.resources['bg'].texture, 16, 16);
+      bg.width = windowWidth;
+      bg.height = windowHeight;
+      bg.interactive = true;
+      bg.on("pointerdown", (event) => {
+         var position = event.data.getLocalPosition(bg);
+         console.log(event, position.x, position.y);
+      })
+      bg.scale.set(scale);
+      app.stage.addChild(bg);
       var stage = this.stage = new PIXI.Container();
       stage.x = x;
       stage.y = y;
       // stage.width = width;
       // stage.height = height;
-      stage.scale.set(scale)
+      stage.scale.set(scale);
       context.app.stage.addChild(stage);
       context.stage = stage;
    }

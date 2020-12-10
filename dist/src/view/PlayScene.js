@@ -2,26 +2,18 @@
 import Scene from "./Scene";
 import BlockLayer from "./BlockLayer";
 import sounds from "../util/sounds";
+import config from "../config/config";
 
 export default class PlayScene extends Scene {
    constructor() {
       super();
    }
    init() {
-      var bg = this.bg = new PIXI.Sprite(PIXI.loader.resources['bg'].texture);
-      bg.width = 150;
-      bg.height = 250;
-      bg.interactive = true;
-      bg.on("pointerdown", (event) => {
-         var position = event.data.getLocalPosition(bg);
-         console.log(event, position.x, position.y);
-      })
-      this.stage.addChild(bg);
       // 返回
-      var startBtn = this.startBtn = new PIXI.Text('返回', { fontSize: 26 });
+      var startBtn = this.startBtn = new PIXI.Text('返回', { fontSize: 22, fill: '#5b6ee1', fontWeight: 'bold', strokeThickness: 2 });
       startBtn.anchor.set(0.5, 0.5);
-      startBtn.x = 75;
-      startBtn.y = 220;
+      startBtn.x = config.size.width / 2;
+      startBtn.y = config.size.height * 0.9;
       startBtn.scale.set(1);
       startBtn.interactive = true;
       startBtn.on('pointerdown', (event) => {
@@ -39,12 +31,14 @@ export default class PlayScene extends Scene {
    }
    createBlockLayer() {
       var layer = this.blockLayer = new BlockLayer();
-      layer.init(this.stage, 11, 50);
+      var { size, blockSize, blockNum } = config;
+      var x = (size.width - blockSize * blockNum) * 0.5;
+      var y = 50;
+      layer.init(this.stage, x, y);
    }
    dispose() {
       sounds.stop();
       this.blockLayer.dispose();
-      this.bg.destroy();
       this.startBtn.destroy();
    }
 }

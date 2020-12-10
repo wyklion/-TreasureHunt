@@ -1,3 +1,4 @@
+import config from '../config/config'
 
 export default class Block {
    constructor() {
@@ -6,11 +7,11 @@ export default class Block {
    init(parent, i, j) {
       this.x = j;
       this.y = i;
-      this.idx = i * 8 + j;
+      this.idx = i * config.blockNum + j;
       var block = this.sprite = new PIXI.Sprite(PIXI.loader.resources['blueBlock'].texture);
       block.interactive = true;
-      block.x = j * 16;
-      block.y = i * 16;
+      block.x = j * config.blockSize;
+      block.y = i * config.blockSize;
       parent.addChild(block);
       block.on('pointerdown', this.onClick);
    }
