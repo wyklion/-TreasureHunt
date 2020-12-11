@@ -11,7 +11,8 @@ var argv = require('yargs').argv;
 var merge2 = require("merge2");
 var pako = require('pako');
 var jsImport=require('gulp-js-import');
-const webpack = require('webpack-stream');
+const webpackStream = require('webpack-stream');
+const webpack = require('webpack');
 var fs = require('fs');
 var path = require('path');
 
@@ -132,16 +133,26 @@ gulp.task("project_res", ["project_clean"], function () {
 //       .pipe(compressCode())
 //       .pipe(gulp.dest(publish_dir))
 // });
-gulp.task('webpack', ['project_res'], function() {
+gulp.task('build', ['project_res'], function() {
   return gulp.src('src/*.js')
-      .pipe(webpack({
+      .pipe(webpackStream({
          mode: "development",
          devtool:"inline-source-map",
-         entry: './src/Application.js',
+         entry: {
+            main:'./game.js',
+            vendor:'pixi.min'
+         },
          output: {
              path: path.resolve(build_dir),
              filename: "game.js"
          },
+         // plugins:[
+         //    new webpack.optimize.SplitChunksPlugin({
+         //       name: 'vendor',  // 这里是把入口文件所有公共组件都合并到 vendor模块当中
+         //       chunks: "initial",
+         //       filename: '[name].js'
+         //     })
+         // ],
          module: {
             rules: [
                 {
@@ -157,7 +168,7 @@ gulp.task('webpack', ['project_res'], function() {
                 }
             ]
         }
-      }))
+      },webpack))
       .pipe(uglify())
       .pipe(gulp.dest(publish_dir));
 });
@@ -168,5 +179,5 @@ gulp.task('help', function () {
 });
 
 gulp.task('default', function () {
-   gulp.start('webpack');
+   gulp.start('build');
 });
