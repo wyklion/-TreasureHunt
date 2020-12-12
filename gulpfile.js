@@ -12,7 +12,6 @@ var merge2 = require("merge2");
 var pako = require('pako');
 var jsImport=require('gulp-js-import');
 const webpackStream = require('webpack-stream');
-const webpack = require('webpack');
 var fs = require('fs');
 var path = require('path');
 
@@ -73,6 +72,7 @@ function getFileListOfModule(moduleMap, moduleName, ext, dir) {
 
 // some build option
 var project_dir = path.resolve("./");
+var lib_dir=path.join(project_dir, "libs");
 var project_name = path.basename(project_dir);
 var build_dir = path.join(project_dir, "build");
 var publish_dir = path.join(project_dir, "publish/" + project_name);
@@ -134,17 +134,11 @@ gulp.task("project_res", ["project_clean"], function () {
 //       .pipe(gulp.dest(publish_dir))
 // });
 gulp.task('build', ['project_res'], function() {
-  return gulp.src('src/*.js')
+  return gulp.src('./game.js')
       .pipe(webpackStream({
-         mode: "development",
-         devtool:"inline-source-map",
-         entry: {
-            main:'./game.js',
-            vendor:'pixi.min'
-         },
+         mode:'production',
          output: {
-             path: path.resolve(build_dir),
-             filename: "game.js"
+           filename: 'game.js'
          },
          // plugins:[
          //    new webpack.optimize.SplitChunksPlugin({
@@ -157,19 +151,23 @@ gulp.task('build', ['project_res'], function() {
             rules: [
                 {
                     test: /\.js$/, //需要编译的文件
-                    exclude: /node_modules/, //排除 node_modules目录
+                    exclude: [
+                        /node_modules/, //排除 node_modules目录
+                        lib_dir
+                    ],
                     use: {
                         loader: "babel-loader", //loader名称
                         options: {	//配置
                             presets: ['@babel/preset-env'], //预设
-                            plugins: ['@babel/plugin-transform-runtime','@babel/plugin-proposal-class-properties']//插件
+                            plugins: ['@babel/plugin-proposal-class-properties']//插件
                         }
                     }
                 }
             ]
         }
-      },webpack))
+      }))
       .pipe(uglify())
+      .pipe(optimisejs())
       .pipe(gulp.dest(publish_dir));
 });
 
