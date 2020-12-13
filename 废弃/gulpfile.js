@@ -10,7 +10,7 @@ var through = require('through2');
 var argv = require('yargs').argv;
 var merge2 = require("merge2");
 var pako = require('pako');
-var jsImport=require('gulp-js-import');
+var jsImport = require('gulp-js-import');
 const webpackStream = require('webpack-stream');
 var fs = require('fs');
 var path = require('path');
@@ -72,7 +72,7 @@ function getFileListOfModule(moduleMap, moduleName, ext, dir) {
 
 // some build option
 var project_dir = path.resolve("./");
-var lib_dir=path.join(project_dir, "libs");
+var lib_dir = path.join(project_dir, "libs");
 var project_name = path.basename(project_dir);
 var build_dir = path.join(project_dir, "build");
 var publish_dir = path.join(project_dir, "publish/" + project_name);
@@ -113,7 +113,7 @@ gulp.task("project_clean", function () {
       .pipe(clean({ force: true }));
 });
 gulp.task("project_res", ["project_clean"], function () {
-   return gulp.src(['openDataContext/**/*','res/**/*','game.json','project.config.json'],{base:'./'})
+   return gulp.src(['openDataContext/**', 'libs/**', 'res/**', 'game.js', 'game.json', 'project.config.json'], { base: './' })
       .pipe(gulp.dest(publish_dir));
 });
 // gulp.task("compileProject", ["project_res"], function () {
@@ -133,12 +133,12 @@ gulp.task("project_res", ["project_clean"], function () {
 //       .pipe(compressCode())
 //       .pipe(gulp.dest(publish_dir))
 // });
-gulp.task('build', ['project_res'], function() {
-  return gulp.src('./game.js')
+gulp.task('build', ['project_res'], function () {
+   return gulp.src('./src/Application.js')
       .pipe(webpackStream({
-         mode:'production',
+         mode: 'production',
          output: {
-           filename: 'game.js'
+            filename: 'app.js'
          },
          // plugins:[
          //    new webpack.optimize.SplitChunksPlugin({
@@ -149,22 +149,22 @@ gulp.task('build', ['project_res'], function() {
          // ],
          module: {
             rules: [
-                {
-                    test: /\.js$/, //需要编译的文件
-                    exclude: [
-                        /node_modules/, //排除 node_modules目录
-                        lib_dir
-                    ],
-                    use: {
-                        loader: "babel-loader", //loader名称
-                        options: {	//配置
-                            presets: ['@babel/preset-env'], //预设
-                            plugins: ['@babel/plugin-proposal-class-properties']//插件
-                        }
-                    }
-                }
+               {
+                  test: /\.js$/, //需要编译的文件
+                  exclude: [
+                     /node_modules/, //排除 node_modules目录
+                     /libs/
+                  ],
+                  use: {
+                     loader: "babel-loader", //loader名称
+                     options: {	//配置
+                        presets: ['@babel/preset-env'], //预设
+                        plugins: ['@babel/plugin-proposal-class-properties']//插件
+                     }
+                  }
+               }
             ]
-        }
+         }
       }))
       .pipe(uglify())
       .pipe(optimisejs())
